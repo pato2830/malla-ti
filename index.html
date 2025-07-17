@@ -1,96 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Malla Tecnologías de la Información</title>
-  <style>
-    body { font-family: sans-serif; padding: 2em; background: #f8f9fa; }
-    h1, h2 { text-align: center; }
-    .materia {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin: 5px auto;
-      max-width: 500px;
-      cursor: pointer;
-      background: #fff;
-      transition: background 0.3s;
+  <meta charset="UTF-8" />
+  <title>Malla Tecnologías de la Información</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2em;
+      background: #f8f9fa;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .materia {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin: 5px auto;
+      max-width: 600px;
+      cursor: pointer;
+      background: #fff;
+      transition: background 0.3s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .materia:hover {
+      background: #e2e6ea;
+    }
+    .aprobado {
+      text-decoration: line-through;
+      color: #28a745;
+      background: #d4edda !important;
+    }
+    .materia.bloqueada {
+      background-color: #ffe6e6;
+      cursor: not-allowed;
     }
-    .materia:hover {
-      background: #e2e6ea;
+    .materia.bloqueada:hover {
+      background-color: #ffe6e6;
     }
-    .aprobado {
-      text-decoration: line-through;
-      color: #28a745;
-      background: #d4edda !important;
-    }
-  </style>
+    .materia-codigo {
+      font-weight: bold;
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
 
-  <h1>Malla Curricular</h1>
-  <h2>Tecnologías de la Información</h2>
+  <h1>Malla Curricular</h1>
+  <h2>Tecnologías de la Información</h2>
 
-  <div id="malla"></div>
+  <div id="malla"></div>
 
-  <script>
+  <script>
+    // Mantener un registro de las asignaturas aprobadas por su código
+    const asignaturasAprobadas = new Set();
+
     const malla = {
       "PAO 1": [
-        "INGLES I",
-        "FUNDAMENTOS DE PROGRAMACIÓN",
-        "EDUCACIÓN FÍSICA",
-        "OFIMÁTICA",
-        "SOSTENIBILIDAD AMBIENTAL",
-        "ÁLGEBRA LINEAL",
-        "FÍSICA"
+        { nombre: "INGLÉS I", codigo: "TECTB01", requisitos: [] },
+        { nombre: "FUNDAMENTOS DE PROGRAMACIÓN", codigo: "TECTB02", requisitos: [] },
+        { nombre: "EDUCACIÓN FÍSICA", codigo: "EDUCACIONFISICA", requisitos: [] }, // Código añadido para consistencia
+        { nombre: "OFIMÁTICA", codigo: "TECTB04", requisitos: [] },
+        { nombre: "SOSTENIBILIDAD AMBIENTAL", codigo: "TECTB05", requisitos: [] },
+        { nombre: "ÁLGEBRA LINEAL", codigo: "TECTB06", requisitos: [] },
+        { nombre: "FÍSICA", codigo: "TECTB07", requisitos: [] }
       ],
-      "PAO 2": [
-        "INGLES II",
-        "CÁLCULO I",
-        "ADMINISTRACIÓN DE SISTEMAS OPERATIVOS",
-        "ARQUITECTURA DE LA INFORMACIÓN",
-        "PROGRAMACIÓN",
-        "GESTIÓN DE PROYECTOS TI",
-        "COMUNICACIÓN ORAL Y ESCRITA"
-      ],
-      "PAO 3": [
-        "INGLES III",
-        "CÁLCULO II",
-        "GESTIÓN ADMINISTRATIVA",
-        "ESTRUCTURA DE DATOS",
-        "FUNDAMENTOS DE BASE DE DATOS",
-        "REALIDAD SOCIOECONÓMICA E INTERCULTURALIDAD",
-        "ESTADÍSTICA"
+      "PAO 2 y PAO 3": [ // Unificado PAO 2 y PAO 3 como se indica en la fuente
+        { nombre: "INGLÉS II", codigo: "TECTB08", requisitos: ["TECTB01"] },
+        { nombre: "CÁLCULO I", codigo: "TECTB09", requisitos: ["TECTB06"] },
+        { nombre: "ADMINISTRACIÓN DE SISTEMAS OPERATIVOS", codigo: "TECTP10", requisitos: ["TECTB04"] },
+        { nombre: "ARQUITECTURA DE LA INFORMACIÓN", codigo: "TECTP11", requisitos: ["TECTB02", "TECTB04"] },
+        { nombre: "PROGRAMACIÓN", codigo: "TECTB12", requisitos: ["TECTB02"] },
+        { nombre: "GESTIÓN DE PROYECTOS TI", codigo: "TECTP13", requisitos: ["TECTB02", "TECTB04"] },
+        { nombre: "COMUNICACIÓN ORAL Y ESCRITA", codigo: "TECTB14", requisitos: ["TECTB06"] }
       ],
       "PAO 4": [
-        "INGLES IV",
-        "ADMINISTRACIÓN DE BASE DE DATOS",
-        "SISTEMAS INTERACTIVOS Y MULTIMEDIA",
-        "SISTEMAS DE COMUNICACIÓN",
-        "INTELIGENCIA DE NEGOCIOS",
-        "FUNDAMENTOS DE REDES",
-        "EMPRENDIMIENTO"
+        { nombre: "INGLÉS III", codigo: "TECTB15", requisitos: ["TECTB08"] },
+        { nombre: "CÁLCULO II", codigo: "TECTB16", requisitos: ["TECTB09"] },
+        { nombre: "GESTIÓN ADMINISTRATIVA", codigo: "TECTB17", requisitos: ["TECTP13"] },
+        { nombre: "ESTRUCTURA DE DATOS", codigo: "TECTP18", requisitos: ["TECTB12"] },
+        { nombre: "FUNDAMENTOS DE BASE DE DATOS", codigo: "TECTP19", requisitos: ["TECTP11", "TECTB12"] },
+        { nombre: "REALIDAD SOCIOECONÓMICA E INTERCULTURALIDAD", codigo: "TECTB20", requisitos: ["TECTB14"] },
+        { nombre: "ESTADÍSTICA", codigo: "TECTB21", requisitos: ["TECTB09"] }
+      ],
+      "PAO 5": [
+        { nombre: "INGLÉS IV", codigo: "TECTB22", requisitos: ["TECTB15"] },
+        { nombre: "ADMINISTRACIÓN DE BASE DE DATOS", codigo: "TECTP23", requisitos: ["TECTP18", "TECTP19"] },
+        { nombre: "SISTEMAS INTERACTIVOS Y MULTIMEDIA", codigo: "TECTP24", requisitos: ["TECTP18"] },
+        { nombre: "SISTEMAS DE COMUNICACIÓN", codigo: "TECTP25", requisitos: ["TECTP19"] },
+        { nombre: "INTELIGENCIA DE NEGOCIOS", codigo: "TECTP26", requisitos: ["TECTP18", "TECTP19"] },
+        { nombre: "FUNDAMENTOS DE REDES", codigo: "TECTP27", requisitos: ["TECTP19"] },
+        { nombre: "EMPRENDIMIENTO", codigo: "TECTP40", requisitos: ["TECTB17"] }
+      ],
+      "PAO 6": [
+        { nombre: "BASES DE DATOS AVANZADAS", codigo: "TECTP28", requisitos: ["TECTP23"] },
+        { nombre: "DERECHO INFORMÁTICO", codigo: "TECTP29", requisitos: ["TECTP26"] },
+        { nombre: "TECNOLOGÍA WEB", codigo: "TECTP30", requisitos: ["TECTP24", "TECTP26"] },
+        { nombre: "CONMUTACIÓN Y ENRUTAMIENTO", codigo: "TECTP31", requisitos: ["TECTP25", "TECTP27"] },
+        { nombre: "ÉTICA Y RELACIONES HUMANAS", codigo: "TECTP32", requisitos: ["TECTB20"] },
+        { nombre: "INTERACCIÓN HOMBRE-MÁQUINA", codigo: "TECTP33", requisitos: ["TECTP24"] }
+      ],
+      "PAO 7": [
+        { nombre: "MINERÍA DE DATOS", codigo: "TECTP34", requisitos: ["TECTP28"] },
+        { nombre: "METODOLOGÍA DE LA INVESTIGACIÓN CIENTÍFICA", codigo: "TECTP35", requisitos: ["TECTB21"] },
+        { nombre: "INTEROPERABILIDAD DE PLATAFORMAS", codigo: "TECTP36", requisitos: ["TECTP30", "TECTP31"] },
+        { nombre: "PRÁCTICAS DE SERVICIO COMUNITARIO", codigo: "TECTP37", requisitos: ["TECTP30"] },
+        { nombre: "ESCALABILIDAD DE REDES", codigo: "TECTP38", requisitos: ["TECTP31"] },
+        { nombre: "COMPUTACIÓN MÓVIL", codigo: "TECTP39", requisitos: ["TECTP30"] }
+      ],
+      "PAO 8": [
+        { nombre: "APLICACIONES PARA LA GESTIÓN DE REDES", codigo: "TECTP41", requisitos: ["TECTP38"] },
+        { nombre: "SEGURIDAD TI", codigo: "TECTP42", requisitos: ["TECTP36"] },
+        { nombre: "PRÁCTICAS LABORALES", codigo: "TECTP43", requisitos: ["TECTP34", "TECTP36"] },
+        { nombre: "VIRTUALIZACIÓN", codigo: "TECTP44", requisitos: ["TECTP38"] },
+        { nombre: "FORMULACIÓN TRABAJO DE TITULACIÓN", codigo: "TECTP45", requisitos: ["TECTP35", "TECTP36"] }
+      ],
+      "PAO 9": [ // Añadido PAO 9 según la información proporcionada
+        { nombre: "AUDITORÍA TI", codigo: "TECTP46", requisitos: ["TECTP29"] },
+        { nombre: "GOBIERNO TI", codigo: "TECTP47", requisitos: ["TECTP42"] },
+        { nombre: "CLOUD COMPUTING", codigo: "TECTP48", requisitos: ["TECTP44"] },
+        { nombre: "SISTEMAS DE INFORMACIÓN GEOGRÁFICA", codigo: "TECTP49", requisitos: ["TECTP44"] },
+        { nombre: "TRABAJO DE TITULACIÓN", codigo: "TECTP50", requisitos: ["TECTP45"] }
       ]
     };
 
     const container = document.getElementById('malla');
+
+    // Función para obtener el nombre de una asignatura dado su código
+    function getNombreAsignatura(codigo) {
+      for (const pao in malla) {
+        for (const materia of malla[pao]) {
+          if (materia.codigo === codigo) {
+            return materia.nombre;
+          }
+        }
+      }
+      return codigo; // Si no encuentra el nombre, devuelve el código
+    }
+
+    function checkAndToggleMateria(div, materia) {
+      const isApproved = asignaturasAprobadas.has(materia.codigo);
+      const allRequirementsMet = materia.requisitos.every(req => asignaturasAprobadas.has(req));
+
+      if (isApproved) {
+        asignaturasAprobadas.delete(materia.codigo);
+        div.classList.remove('aprobado');
+        // Desaprobar automáticamente las materias que dependen de esta
+        for (const pao in malla) {
+          malla[pao].forEach(subMateria => {
+            if (subMateria.requisitos.includes(materia.codigo) && asignaturasAprobadas.has(subMateria.codigo)) {
+              const subMateriaDiv = document.querySelector(`[data-codigo="${subMateria.codigo}"]`);
+              if (subMateriaDiv) {
+                asignaturasAprobadas.delete(subMateria.codigo);
+                subMateriaDiv.classList.remove('aprobado');
+                subMateriaDiv.classList.add('bloqueada');
+              }
+            }
+          });
+        }
+      } else {
+        if (allRequirementsMet) {
+          asignaturasAprobadas.add(materia.codigo);
+          div.classList.add('aprobado');
+          div.classList.remove('bloqueada'); // Asegurarse de que no esté bloqueada si se aprueba
+        } else {
+          const missingRequirements = materia.requisitos.filter(req => !asignaturasAprobadas.has(req));
+          const missingNames = missingRequirements.map(getNombreAsignatura).join(', ');
+          alert(`Para aprobar "${materia.nombre}", primero debes aprobar: ${missingNames}`);
+        }
+      }
+      updateMateriaStates();
+    }
+
+    function updateMateriaStates() {
+        for (const pao in malla) {
+            malla[pao].forEach(materia => {
+                const div = document.querySelector(`[data-codigo="${materia.codigo}"]`);
+                if (div) {
+                    const allRequirementsMet = materia.requisitos.every(req => asignaturasAprobadas.has(req));
+                    if (!asignaturasAprobadas.has(materia.codigo) && !allRequirementsMet) {
+                        div.classList.add('bloqueada');
+                        div.style.pointerEvents = 'none'; // Deshabilita el clic
+                    } else {
+                        div.classList.remove('bloqueada');
+                        div.style.pointerEvents = 'auto'; // Habilita el clic
+                    }
+                }
+            });
+        }
+    }
 
     for (const [pao, materias] of Object.entries(malla)) {
       const paoHeader = document.createElement('h2');
       paoHeader.textContent = pao;
       container.appendChild(paoHeader);
 
-      materias.forEach(nombre => {
+      materias.forEach(materia => {
         const div = document.createElement('div');
         div.className = 'materia';
-        div.textContent = nombre;
-        div.addEventListener('click', () => {
-          div.classList.toggle('aprobado');
-        });
+        div.dataset.codigo = materia.codigo; // Añadir un atributo de datos para el código
+        
+        const codigoSpan = document.createElement('span');
+        codigoSpan.className = 'materia-codigo';
+        codigoSpan.textContent = `(${materia.codigo})`;
+        div.appendChild(codigoSpan);
+
+        const nombreSpan = document.createElement('span');
+        nombreSpan.textContent = materia.nombre;
+        div.appendChild(nombreSpan);
+
+        div.addEventListener('click', () => checkAndToggleMateria(div, materia));
         container.appendChild(div);
       });
     }
-  </script>
+
+    // Inicializar estados de las materias (todas bloqueadas al inicio excepto las del PAO 1)
+    updateMateriaStates();
+  </script>
 
 </body>
 </html>
